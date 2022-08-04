@@ -11,11 +11,11 @@ from crawler.crawler.items import JobsCrawlerItem
 
 class SpotifySpider(scrapy.Spider):
 
-    name = 'spotify'
+    name = "spotify"
 
     @staticmethod
     def extract_links():
-        with open('spotify_links.txt', 'r') as f:
+        with open("spotify_links.txt", "r") as f:
             links = ast.literal_eval(f.read())
             return links
 
@@ -27,47 +27,58 @@ class SpotifySpider(scrapy.Spider):
     def yield_job_item(self, response):
         l = ItemLoader(item=JobsCrawlerItem(), response=response)
 
-        l.add_value('url', response.url)
+        l.add_value("url", response.url)
 
-        title = response.xpath('//h1/span/text()').get()
-        subtitle = response.xpath('//h1/text()').get()
+        title = response.xpath("//h1/span/text()").get()
+        subtitle = response.xpath("//h1/text()").get()
         if subtitle:
-            job_title = title + '- ' + subtitle
+            job_title = title + "- " + subtitle
         else:
             job_title = title
-        l.add_value('title', job_title)
+        l.add_value("title", job_title)
 
-        l.add_value('company', 'Spotify')
+        l.add_value("company", "Spotify")
 
         remote = response.xpath('//span[text()="Remote EMEA"]').get()
-        if remote == 'Remote EMEA':
-            l.add_value('remote', 'Remote EMEA')
+        if remote == "Remote EMEA":
+            l.add_value("remote", "Remote EMEA")
 
-        l.add_value('location',
-                    response.xpath('//p[text()="Location"]/parent::div//span/text()').get())
+        l.add_value(
+            "location",
+            response.xpath('//p[text()="Location"]/parent::div//span/text()').get(),
+        )
 
-        l.add_value('type',
-                    response.xpath('//p[text()="Job type"]/following-sibling::p/text()').get())
+        l.add_value(
+            "type",
+            response.xpath('//p[text()="Job type"]/following-sibling::p/text()').get(),
+        )
 
-        l.add_value('industry', 'NA')
+        l.add_value("industry", "NA")
 
-        l.add_value('text',
-                    response.xpath('//div[contains(@class, "singlejob_rightContent")]/div[1]//text()').getall(), Join())
+        l.add_value(
+            "text",
+            response.xpath(
+                '//div[contains(@class, "singlejob_rightContent")]/div[1]//text()'
+            ).getall(),
+            Join(),
+        )
 
-        l.add_value('created_at', datetime.now())
+        l.add_value("created_at", datetime.now())
 
         yield l.load_item()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     process = CrawlerProcess(
         settings={
-            'ROBOTSTXT_OBEY': False,
-            'ITEM_PIPELINES': {'crawler.crawler.pipelines.JobsCrawlerPipeline': 300, },
-            'AUTOTHROTTLE_ENABLED': True,
-            'AUTOTHROTTLE_TARGET_CONCURRENCY': 1,
-            'AUTOTHROTTLE_START_DELAY': 5,
-            'AUTOTHROTTLE_MAX_DELAY': 60
+            "ROBOTSTXT_OBEY": False,
+            "ITEM_PIPELINES": {
+                "crawler.crawler.pipelines.JobsCrawlerPipeline": 300,
+            },
+            "AUTOTHROTTLE_ENABLED": True,
+            "AUTOTHROTTLE_TARGET_CONCURRENCY": 1,
+            "AUTOTHROTTLE_START_DELAY": 5,
+            "AUTOTHROTTLE_MAX_DELAY": 60,
         }
     )
     process.crawl(SpotifySpider)
