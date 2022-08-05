@@ -1,6 +1,6 @@
 import psycopg2
 
-from data_engineering_job_market_package_FelitaD.config.definitions import JOB_MARKET_DB_PWD, JOB_MARKET_DB_USER
+from data_job_crawler.config.definitions import JOB_MARKET_DB_PWD, JOB_MARKET_DB_USER
 
 
 class JobsCrawlerPipeline:

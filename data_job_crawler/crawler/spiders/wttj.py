@@ -1,12 +1,13 @@
 import scrapy
 import ast
+import pkg_resources
 from datetime import datetime
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.loader import ItemLoader
 from itemloaders.processors import Join
 
-from crawler.crawler.items import JobsCrawlerItem
+from data_job_crawler.crawler.items import JobsCrawlerItem
 
 
 class WttjSpider(scrapy.Spider):
@@ -19,7 +20,8 @@ class WttjSpider(scrapy.Spider):
 
     @staticmethod
     def extract_links():
-        with open("wttj_links.txt", "r") as f:
+        stream = pkg_resources.resource_stream(__name__, 'data/wttj_links.txt')
+        with open(stream.name, "r") as f:
             links = ast.literal_eval(f.read())
             return links
 
@@ -81,7 +83,7 @@ if __name__ == "__main__":
         settings={
             "ROBOTSTXT_OBEY": False,
             "ITEM_PIPELINES": {
-                "crawler.crawler.pipelines.JobsCrawlerPipeline": 300,
+                "data_job_crawler.crawler.pipelines.JobsCrawlerPipeline": 300,
             },
             "AUTOTHROTTLE_ENABLED": True,
             "AUTOTHROTTLE_TARGET_CONCURRENCY": 1,

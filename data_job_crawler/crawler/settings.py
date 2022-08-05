@@ -60,7 +60,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'elt.extract.jobs_crawler.pipelines.JobsCrawlerPipeline': 300,
+   'data_job_crawler.crawler.pipelines.JobsCrawlerPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -1,6 +1,8 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 
+import pkg_resources
+
 
 class WttjLinksSpider(scrapy.Spider):
     """
@@ -52,7 +54,8 @@ class WttjLinksSpider(scrapy.Spider):
                 print("Cannot find a next button on ", page.url)
                 break
             finally:
-                with open("wttj_links.txt", "w") as f:
+                stream = pkg_resources.resource_stream(__name__, 'data/wttj_links.txt')
+                with open(stream.name, "w") as f:
                     f.write(str(self.links))
 
         await page.close()

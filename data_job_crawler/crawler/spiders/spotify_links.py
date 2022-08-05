@@ -2,6 +2,8 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from playwright._impl._api_types import TimeoutError
 
+import pkg_resources
+
 
 class SpotifyLinksSpider(scrapy.Spider):
 
@@ -38,7 +40,8 @@ class SpotifyLinksSpider(scrapy.Spider):
             if href.startswith("/jobs/"):
                 self.spotify_links.add("https://www.lifeatspotify.com" + href)
 
-        with open("spotify_links.txt", "w") as f:
+        stream = pkg_resources.resource_stream(__name__, 'data/spotify_links.txt')
+        with open(stream.name, "w") as f:
             f.write(str(self.spotify_links))
 
 
