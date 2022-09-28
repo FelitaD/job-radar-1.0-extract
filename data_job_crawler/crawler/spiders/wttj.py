@@ -8,6 +8,7 @@ from scrapy.loader import ItemLoader
 from itemloaders.processors import Join
 
 from data_job_crawler.crawler.items import JobsCrawlerItem
+from data_job_crawler.config.fields import JOB_FIELDS
 
 
 class WttjSpider(scrapy.Spider):
@@ -17,6 +18,7 @@ class WttjSpider(scrapy.Spider):
     """
 
     name = "wttj"
+
 
     @staticmethod
     def extract_links():
@@ -32,6 +34,7 @@ class WttjSpider(scrapy.Spider):
 
     def yield_job_item(self, response):
         l = ItemLoader(item=JobsCrawlerItem(), response=response)
+
         l.add_value("url", response.url)
         l.add_value(
             "title",
@@ -43,12 +46,6 @@ class WttjSpider(scrapy.Spider):
             "company",
             response.xpath(
                 '//*[@data-testid="job-summary-organization-title"]/text()'
-            ).get(),
-        )
-        l.add_value(
-            "remote",
-            response.xpath(
-                '//*[@name="remote"]/parent::span/following-sibling::span//text()'
             ).get(),
         )
         l.add_value(
@@ -73,6 +70,12 @@ class WttjSpider(scrapy.Spider):
             "text",
             response.xpath("//h2/following-sibling::div//text()").getall(),
             Join(),
+        )
+        l.add_value(
+            "remote",
+            response.xpath(
+                '//*[@name="remote"]/parent::span/following-sibling::span//text()'
+            ).get(),
         )
         l.add_value("created_at", datetime.now())
         yield l.load_item()

@@ -7,8 +7,9 @@ authors = ["Donor <donorfelita@msn.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 psycopg2 = "^2.9.3"
-Scrapy = "^2.6.2"
+scrapy = "^2.6.2"
 playwright = "^1.24.1"
+scrapy-playwright = "*"
 
 [tool.poetry.dev-dependencies]
 
