@@ -8,7 +8,6 @@ from scrapy.loader import ItemLoader
 from itemloaders.processors import Join
 
 from data_job_crawler.crawler.items import JobsCrawlerItem
-from data_job_crawler.config.fields import JOB_FIELDS
 
 
 class WttjSpider(scrapy.Spider):
