@@ -50,7 +50,7 @@ class WttjSpider(scrapy.Spider):
         l.add_value(
             "location",
             response.xpath(
-                '//*[@name="location"]/parent::span/following-sibling::span/text()'
+                '//*[@name="location"]/parent::span/following-sibling::span//text()'
             ).get(),
         )
         l.add_value(
