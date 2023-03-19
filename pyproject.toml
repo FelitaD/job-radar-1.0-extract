@@ -1,16 +1,15 @@
 [tool.poetry]
 name = "data_job_crawler"
-version = "0.4.0"
+version = "0.8.0"
 description = ""
 authors = ["Donor <donorfelita@msn.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-psycopg2 = "^2.9.3"
+psycopg2-binary = "^2.9.5"
 scrapy = "^2.6.2"
 playwright = "^1.24.1"
 scrapy-playwright = "*"
-
 [tool.poetry.dev-dependencies]
 
 [build-system]
