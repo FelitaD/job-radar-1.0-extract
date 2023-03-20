@@ -39,7 +39,7 @@ class WttjLinksSpider(scrapy.Spider):
 
         while True:
             try:
-                next_locator = page.locator('//*[@aria-label="Next page"]')
+                next_locator = page.locator('//*[@aria-label="Pagination"]//li[last()]')
                 async with page.expect_navigation():
                     await next_locator.click()
 
