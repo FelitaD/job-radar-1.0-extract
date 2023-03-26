@@ -1,6 +1,6 @@
 import scrapy
 import ast
-import pkg_resources
+import boto3
 from datetime import datetime
 
 from scrapy.crawler import CrawlerProcess
@@ -8,7 +8,7 @@ from scrapy.loader import ItemLoader
 from itemloaders.processors import Join
 
 from data_job_crawler.crawler.items import JobsCrawlerItem
-
+from data_job_crawler.config.definitions import BUCKET
 
 class WttjSpider(scrapy.Spider):
     """
@@ -21,10 +21,11 @@ class WttjSpider(scrapy.Spider):
     @staticmethod
     def extract_links():
         today = datetime.now().strftime('%d-%m-%y')
-        stream = pkg_resources.resource_stream(__name__, f'data/wttj_links_{today}.txt')
-        with open(stream.name, "r") as f:
-            links = ast.literal_eval(f.read())
-            return links
+        key = f'wttj_links_{today}.txt'
+        s3 = boto3.resource('s3')
+        obj = s3.Object(BUCKET, key)
+        links = obj.get()['Body'].read().decode('utf-8')
+        return ast.literal_eval(links)
 
     def start_requests(self):
         links = self.extract_links()
