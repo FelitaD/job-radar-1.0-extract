@@ -1,14 +1,16 @@
 # data-job-crawler
 
+Scrape job listings in a formatted manner.
+
+# Architecture
+
+![crawler](diagram/ingestion_pipeline.jpg)
+
 # Testing
 
-## Manual Tests
-
-- [ ] Run the spiders (eg. WttjLinksSpider + WttjSpider)
-- With the output txt file 
-  - [ ] Search for links in the first, last and middle pages of results.
-  - [ ] Compare number of links with `item_scraped_count` from 2nd spider
-- [ ] Check logs for errors' tracebacks
+## Check if all jobs are scraped
+- Compare number of jobs from website with number of links in [bucket]()
+- Search for first and last job links
 
 ## End-to-end test
 

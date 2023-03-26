@@ -18,3 +18,4 @@ class JobsCrawlerItem(scrapy.Item):
     created_at = scrapy.Field()
 
 
+
