@@ -3,29 +3,27 @@ from diagrams.onprem.database import Postgresql
 from diagrams.programming.language import Python
 from diagrams.custom import Custom
 from diagrams.elastic.beats import Filebeat
+from diagrams.aws.storage import SimpleStorageServiceS3BucketWithObjects as S3
 
 
-with Diagram(name='Ingestion pipeline', outformat="jpg", show=False):
+with Diagram(name='One Website Ingestion Pipeline', outformat="jpg", show=False):
     # Web sources
-    web_wttj = Custom('wttj.com/jobs', './diagram/welcome-to-the-jungle-squarelogo-1602063832341.png')
-    web_spotify = Custom('lifeatspotify.com/jobs', './diagram/Spotify_icon.png')
+    web = Custom('Dynamically loaded content web page', 'web.png')
 
     # Text files
-    wttj_txt = Filebeat('wttj_links.txt')
-    spotify_txt = Filebeat('spotify_links.txt')
+    txt = Filebeat('links_spider.txt')
+
+    # S3 bucket
+    s3 = S3('crawler-job-links')
 
     # Spiders with library used for crawling
-    wttj_links = Custom('WttjLinksSpider', './diagram/playwright.png')
-    wttj = Custom('WttjSpider', './diagram/scrapy.png')
-    spotify_links = Custom('SpotifyLinksSpider', './diagram/playwright.png')
-    spotify = Custom('SpotifySpider', './diagram/scrapy.png')
-    scrapy_pipeline = Custom('JobsCrawlerPipeline', './diagram/scrapy.png')
+    links_spider = Custom('Spider with Playwright', 'playwright.png')
+    spider = Custom('Spider with Scrapy', 'scrapy.png')
+    scrapy_pipeline = Custom('Scrapy pipeline', 'scrapy.png')
 
     # Database
     raw_db = Postgresql('raw_jobs')
 
     # Dependencies
-    web_wttj << Edge(label='crawls') << wttj_links >> wttj_txt << Edge(label='reads from') << wttj
-    web_spotify << Edge(label='crawls') << spotify_links >> spotify_txt << Edge(label='reads from') << spotify
-
-    [wttj, spotify] >> scrapy_pipeline >> Edge(label='writes to') >> raw_db
+    web << Edge(label='crawls') << links_spider >> txt >> s3 << Edge(label='reads from') << spider
+    spider >> scrapy_pipeline >> Edge(label='writes to') >> raw_db

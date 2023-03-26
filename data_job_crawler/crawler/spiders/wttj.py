@@ -18,10 +18,10 @@ class WttjSpider(scrapy.Spider):
 
     name = "wttj"
 
-
     @staticmethod
     def extract_links():
-        stream = pkg_resources.resource_stream(__name__, 'data/wttj_links.txt')
+        today = datetime.now().strftime('%d-%m-%y')
+        stream = pkg_resources.resource_stream(__name__, f'data/wttj_links_{today}.txt')
         with open(stream.name, "r") as f:
             links = ast.literal_eval(f.read())
             return links
