@@ -1,6 +1,7 @@
 import scrapy
 import ast
 import boto3
+import re
 from datetime import datetime
 
 from scrapy.crawler import CrawlerProcess
@@ -35,7 +36,7 @@ class WttjSpider(scrapy.Spider):
     def yield_job_item(self, response):
         l = ItemLoader(item=JobsCrawlerItem(), response=response)
 
-        l.add_value("url", response.url)
+        l.add_value("url", re.search(r'.*(?=\?q=)', response.url).group(0))
         l.add_value(
             "title",
             response.xpath(

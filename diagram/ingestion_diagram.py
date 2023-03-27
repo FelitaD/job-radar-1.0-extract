@@ -6,18 +6,18 @@ from diagrams.elastic.beats import Filebeat
 from diagrams.aws.storage import SimpleStorageServiceS3BucketWithObjects as S3
 
 
-with Diagram(name='One Website Ingestion Pipeline', outformat="jpg", show=False):
+with Diagram(name='Ingestion Data Flow', outformat="jpg", show=False):
     # Web sources
     web = Custom('Dynamically loaded content web page', 'web.png')
 
     # Text files
-    txt = Filebeat('links_spider.txt')
+    txt = Filebeat('txt')
 
     # S3 bucket
     s3 = S3('crawler-job-links')
 
     # Spiders with library used for crawling
-    links_spider = Custom('Spider with Playwright', 'playwright.png')
+    links_spider = Custom('Scrapy + Playwright', 'playwright.png')
     spider = Custom('Spider with Scrapy', 'scrapy.png')
     scrapy_pipeline = Custom('Scrapy pipeline', 'scrapy.png')
 

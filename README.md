@@ -4,23 +4,27 @@ Scrape job listings in a formatted manner.
 
 # Architecture
 
-![crawler](diagram/ingestion_pipeline.jpg)
+![crawler](diagram/one_website_ingestion_pipeline.jpg)
 
 # Testing
 
-## Check if all jobs are scraped
-- Compare number of jobs from website with number of links in [bucket]()
+## End-to-end tests
+
+- Compare number of jobs from website with number of links scraped
 - Search for first and last job links
+- Compare number of records in the database before and after
+- Check number of new records
 
-## End-to-end test
-
-The input data, a job's web page, has to end up in raw_jobs with the intended fields.
-- Copy a URL and query `raw_jobs` 
-
+```sql
+select created_at, count(*) 
+from raw_jobs 
+group by created_at 
+order by created_at desc;
 ```
-SELECT url, title, company, location, type, industry, remote, created_at FROM raw_jobs WHERE url LIKE 'https://www.welcometothejungle.com/fr/companies/foxintelligence/jobs/senior-data-analyst-team-quality_paris%';
-```
 
-```
-SELECT text FROM raw_jobs WHERE url LIKE 'https://www.welcometothejungle.com/fr/companies/foxintelligence/jobs/senior-data-analyst-team-quality_paris%';
+## Data quality tests
+
+Check a few websites  
+```sql
+select * from raw_jobs where created_at = '2023-03-26';
 ```
