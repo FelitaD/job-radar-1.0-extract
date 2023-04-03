@@ -18,4 +18,5 @@ class JobsCrawlerItem(scrapy.Item):
     created_at = scrapy.Field()
 
 
-
+class OldJobsCrawlerItem(scrapy.Item):
+    old_url = scrapy.Field()

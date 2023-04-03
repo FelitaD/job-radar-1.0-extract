@@ -54,7 +54,7 @@ class WttjLinksSpider(scrapy.Spider):
                 break
             finally:
                 now = datetime.now().strftime('%d-%m-%y')
-                with open(f'/Users/donor/PycharmProjects/data-job-crawler/data_job_crawler/crawler/spiders/data'
+                with open(f'/Users/donor/PycharmProjects/data-job-crawler/data_job_crawler/crawler/data'
                           f'/wttj_links_{now}.txt', "w+") as f:
                     f.write(str(self.links))
 

@@ -1,4 +1,4 @@
-# Scrapy settings for extract project
+# Scrapy settings for crawler project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'extract'
+BOT_NAME = 'crawler'
 
-SPIDER_MODULES = ['extract.spiders']
-NEWSPIDER_MODULE = 'extract.spiders'
+SPIDER_MODULES = ['crawler.spiders']
+NEWSPIDER_MODULE = 'crawler.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'extract (+http://www.yourdomain.com)'
+#USER_AGENT = 'crawler (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -45,7 +45,7 @@ ROBOTSTXT_OBEY = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'extract.middlewares.JobsCrawlerSpiderMiddleware': 543,
+#    'crawler.middlewares.JobsCrawlerSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
