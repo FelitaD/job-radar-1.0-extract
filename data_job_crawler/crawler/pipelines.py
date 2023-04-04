@@ -1,6 +1,12 @@
 import psycopg2
+import logging
 
 from data_job_crawler.config.definitions import JOB_MARKET_DB_PWD, JOB_MARKET_DB_USER
+
+logging.basicConfig(filename='crawler_pipeline.log',
+                    filemode='w',
+                    format='%(asctime)s - %(message)s',
+                    level=logging.INFO)
 
 
 class OldJobsCrawlerPipeline:
@@ -26,13 +32,14 @@ class OldJobsCrawlerPipeline:
         for field in item.fields:
             item.setdefault(field, 'NULL')
         try:
-            print('\n'*2, item, '\n'*2)
-            self.cur.execute(
-                "SELECT id, url FROM processed_jobs WHERE url ~ %s;",
-                (item['old_url'][0]))
-            self.cur.execute(
-                "SELECT id, url FROM processed_jobs WHERE url ~ %s;",
-                (item['old_url'][0]))
+            # https://www.psycopg.org/docs/usage.html#passing-parameters-to-sql-queries
+            self.cur.execute("""
+                DELETE FROM apply
+                WHERE apply.job_id 
+                IN (SELECT id 
+                    FROM processed_jobs 
+                    WHERE url ~  %(oldurl)s);
+                """, {'oldurl': item['old_url'][0]})
             self.connection.commit()
         except:
             self.connection.rollback()

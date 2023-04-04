@@ -6,7 +6,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.loader import ItemLoader
 from itemloaders.processors import Join
 
-from data_job_crawler.helpers.extract_links import extract_links_from_s3
+from data_job_crawler.helpers.s3_helper import S3Helper
 from data_job_crawler.crawler.items import JobsCrawlerItem
 
 
@@ -19,7 +19,8 @@ class WttjSpider(scrapy.Spider):
     name = "wttj"
 
     def start_requests(self):
-        links = extract_links_from_s3('wttj')
+        helper = S3Helper()
+        links = helper.extract_links_from_s3('today')
         for link in links:
             yield scrapy.Request(link, self.yield_job_item)
 

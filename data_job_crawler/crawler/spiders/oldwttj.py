@@ -5,7 +5,7 @@ from scrapy.crawler import CrawlerProcess
 from twisted.internet.error import DNSLookupError
 from scrapy.loader import ItemLoader
 
-from data_job_crawler.crawler.helpers.extract_links import extract_links_from_file
+from data_job_crawler.helpers.extract_links import extract_links_from_file
 from data_job_crawler.crawler.items import OldJobsCrawlerItem
 
 FILEPATH = Path(__file__).parent.parent / 'data' / 'unscanned_urls.txt'
@@ -13,30 +13,41 @@ FILEPATH = Path(__file__).parent.parent / 'data' / 'unscanned_urls.txt'
 
 class OldwttjSpider(scrapy.Spider):
     """
-    Detects if a job offer is still open on WTTJ website.
+    Detects if a job position is still opened.
+    Reads urls to be scanned from a text file and deletes them from the apply table.
     """
 
-    name = "oldwttj"
-    allowed_domains = ["www.welcometothejungle.com"]
-    start_urls = [
-        "https://www.welcometothejungle.com/fr/companies/multiverse/jobs/director-data-engineering-infrastructure_london"]
+    name = "oldurls"
 
     def start_requests(self):
         links = extract_links_from_file(FILEPATH)
         for link in links:
-            if 'datai' not in link:  # website is down
-                yield scrapy.Request(link, self.parse)
+            if 'datai.jobs' not in link:  # website is abandoned
+                yield scrapy.Request(link,
+                                     callback=self.parse_links,
+                                     errback=self.parse_error,
+                                     cb_kwargs=dict(main_url=link))
 
-    def parse(self, response):
+    def parse_links(self, response, main_url):
         l = ItemLoader(item=OldJobsCrawlerItem(), response=response)
 
-        try:
-            if response.xpath("//title[text()='Erreur 404']").get():
-                l.add_value('old_url', response.url)
-                yield l.load_item()
-        except DNSLookupError:
-            print('DNSLookupError\n')
+        text_404 = response.xpath("//title[text()='Erreur 404']").get()
+        text_pourvue = response.xpath('//*[text()="Cette offre a été pourvue !"]').get()
+
+        if text_404 or text_pourvue:
             l.add_value('old_url', response.url)
+            print('Sending for deletion', response.url)
+            yield l.load_item()
+        else:
+            print('Keeping', response.url)
+
+    def parse_error(self, failure):
+        l = ItemLoader(item=OldJobsCrawlerItem(), response=failure)
+        main_url = failure.request.cb_kwargs['main_url']
+
+        if failure.value.response.status == 404:
+            l.add_value('old_url', main_url)
+            print('Sending for deletion', main_url)
             yield l.load_item()
 
 

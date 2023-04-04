@@ -4,7 +4,7 @@ Scrape job listings in a formatted manner.
 
 # Architecture
 
-![crawler](diagram/one_website_ingestion_pipeline.jpg)
+![crawler](docs/ingestion_data_flow.jpg)
 
 # Testing
 
