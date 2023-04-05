@@ -27,7 +27,12 @@ class WttjSpider(scrapy.Spider):
     def yield_job_item(self, response):
         l = ItemLoader(item=JobsCrawlerItem(), response=response)
 
-        l.add_value("url", re.search(r'.*(?=\?q=)', response.url).group(0))
+        match = re.search(r'.*(?=\?q=)', response.url)  # url with random ending
+        if match:
+            l.add_value("url", match.group(0))
+        else:
+            l.add_value("url", response.url)
+
         l.add_value(
             "title",
             response.xpath(

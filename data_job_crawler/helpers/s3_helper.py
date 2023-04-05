@@ -2,7 +2,7 @@ import re
 
 import ast
 import boto3
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 
@@ -38,7 +38,11 @@ class S3Helper:
 
     @staticmethod
     def extract_constant_url(urls):
-        return set([re.search(r'.*(?=\?q=)', url).group(0) for url in urls])
+        matches = [re.search(r'.*(?=\?q=)', url) for url in urls]
+        new_urls = [match.group(0) for match in matches if match is not None]
+        if len(new_urls) > 0:
+            return set(new_urls)
+        return set(urls)
 
     def extract_links_from_s3(self, date='today'):
         s3 = boto3.resource('s3')
@@ -58,9 +62,10 @@ class S3Helper:
         bucket = s3.Bucket(bucket_name)
         latest_file = None
         last_modified_date = datetime(2022, 9, 1).replace(tzinfo=None)
+        todays_date = datetime.now().replace(hour=0, minute=0, second=0)
         for file in bucket.objects.all():
             file_date = file.last_modified.replace(tzinfo=None)
-            if last_modified_date < file_date:
+            if last_modified_date < file_date < todays_date:
                 last_modified_date = file_date
                 latest_file = file
         return latest_file.key
