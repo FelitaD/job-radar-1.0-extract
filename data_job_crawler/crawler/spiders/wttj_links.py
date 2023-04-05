@@ -16,6 +16,8 @@ class WttjLinksSpider(scrapy.Spider):
     BASE_URL = "https://www.welcometothejungle.com"
 
     links = set()
+    job_links_xpath = '//ol[@data-testid="jobs_index-search-results"]//a'
+
 
     def start_requests(self):
         yield scrapy.Request(
@@ -28,9 +30,7 @@ class WttjLinksSpider(scrapy.Spider):
         """Parse javascript rendered results page and obtain individual job page links."""
         page = response.meta["playwright_page"]
 
-        job_elements = await page.query_selector_all(
-            '//*[@class="ais-Hits-list-item"]//a'
-        )
+        job_elements = await page.query_selector_all(self.job_links_xpath)
         for job_element in job_elements:
             job_link = await job_element.get_attribute("href")
             job_url = self.BASE_URL + job_link
@@ -42,9 +42,7 @@ class WttjLinksSpider(scrapy.Spider):
                 async with page.expect_navigation():
                     await next_locator.click()
 
-                job_elements = await page.query_selector_all(
-                    '//*[@class="ais-Hits-list-item"]//a'
-                )
+                job_elements = await page.query_selector_all(self.job_links_xpath)
                 for job_element in job_elements:
                     job_link = await job_element.get_attribute("href")
                     job_url = self.BASE_URL + job_link
