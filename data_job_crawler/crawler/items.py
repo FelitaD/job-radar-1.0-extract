@@ -16,6 +16,9 @@ class JobsCrawlerItem(scrapy.Item):
     text = scrapy.Field()
     remote = scrapy.Field()
     created_at = scrapy.Field()
+    education = scrapy.Field()
+    experience = scrapy.Field()
+    size = scrapy.Field()
 
 
 class OldJobsCrawlerItem(scrapy.Item):

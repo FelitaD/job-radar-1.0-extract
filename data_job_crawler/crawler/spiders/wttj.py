@@ -63,6 +63,9 @@ class WttjSpider(scrapy.Spider):
                 '//*[@name="tag"]/parent::span/following-sibling::span/text()'
             ).get(),
         )
+        l.add_value('size', response.xpath('//*[@name="department"]/parent::span/following-sibling::span/text()').get())
+        l.add_value('experience', response.xpath('//span[contains(text(), "Expérience")]/following-sibling::span/text()').get())
+        l.add_value('education', response.xpath('//span[contains(text(), "Éducation")]/following-sibling::span/text()').get())
         l.add_value(
             "text",
             response.xpath("//h2/following-sibling::div//text()").getall(),
@@ -75,6 +78,7 @@ class WttjSpider(scrapy.Spider):
             ).get(),
         )
         l.add_value("created_at", datetime.now())
+
         yield l.load_item()
 
 

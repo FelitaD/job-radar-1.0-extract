@@ -72,12 +72,13 @@ class JobsCrawlerPipeline:
             item.setdefault(field, 'NULL')
         try:
             self.cur.execute(
-                "INSERT INTO raw_jobs(url, title, company, location, type, industry, text, remote, created_at) "
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s) "
+                "INSERT INTO raw_jobs(url, title, company, location, type, industry, text, remote, created_at, education, experience, size) "
+                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
                 "ON CONFLICT (url) DO UPDATE "
-                "SET title=EXCLUDED.title, location=EXCLUDED.location;",
+                "SET education=EXCLUDED.education, experience=EXCLUDED.experience, size=EXCLUDED.size;",
                 (item['url'][0], item['title'][0], item['company'][0], item['location'][0], item['type'][0],
-                 item['industry'][0], item['text'][0], item['remote'][0], item['created_at'][0]))
+                 item['industry'][0], item['text'][0], item['remote'][0], item['created_at'][0], item['education'][0],
+                 item['experience'][0], item['size'][0]))
             self.connection.commit()
         except:
             self.connection.rollback()

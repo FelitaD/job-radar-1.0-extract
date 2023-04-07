@@ -87,4 +87,5 @@ class S3Helper:
 
 
 if __name__ == '__main__':
-    S3Helper().upload_new_links()
+    S3Helper().upload_to_s3()
+    # S3Helper().upload_new_links()
