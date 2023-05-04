@@ -5,13 +5,13 @@ from scrapy.crawler import CrawlerProcess
 from twisted.internet.error import DNSLookupError
 from scrapy.loader import ItemLoader
 
-from data_job_crawler.helpers.extract_links import extract_links_from_file
+from data_job_crawler.helpers.s3_helper import S3Helper
 from data_job_crawler.crawler.items import OldJobsCrawlerItem
 
 FILEPATH = Path(__file__).parent.parent / 'data' / 'unscanned_urls.txt'
 
 
-class OldwttjSpider(scrapy.Spider):
+class OldJobsSpider(scrapy.Spider):
     """
     Detects if a job position is still opened.
     Reads urls to be scanned from a text file and deletes them from the apply table.
@@ -20,7 +20,7 @@ class OldwttjSpider(scrapy.Spider):
     name = "oldurls"
 
     def start_requests(self):
-        links = extract_links_from_file(FILEPATH)
+        links = S3Helper().extract_links_from_file(FILEPATH)
         for link in links:
             if 'datai.jobs' not in link:  # website is abandoned
                 yield scrapy.Request(link,
@@ -64,5 +64,5 @@ if __name__ == "__main__":
             "AUTOTHROTTLE_MAX_DELAY": 60,
         }
     )
-    process.crawl(OldwttjSpider)
+    process.crawl(OldJobsSpider)
     process.start()

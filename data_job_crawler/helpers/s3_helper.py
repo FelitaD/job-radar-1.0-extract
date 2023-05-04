@@ -4,6 +4,7 @@ import ast
 import boto3
 from datetime import datetime
 from pathlib import Path
+import logging
 
 
 class S3Helper:
@@ -47,12 +48,10 @@ class S3Helper:
     def extract_links_from_s3(self, date='today'):
         s3 = boto3.resource('s3')
         bucket_name = "crawler-job-links"
-
         if date == 'today':
             filename = self.today_filename
         elif date == 'latest':
             filename = self.get_latest_modified(s3, bucket_name)
-
         obj = s3.Object(bucket_name, key=filename)
         links = obj.get()['Body'].read().decode('utf-8')
         return ast.literal_eval(links)
@@ -87,5 +86,4 @@ class S3Helper:
 
 
 if __name__ == '__main__':
-    S3Helper().upload_to_s3()
-    # S3Helper().upload_new_links()
+    S3Helper().upload_new_links()

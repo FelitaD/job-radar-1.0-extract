@@ -10,18 +10,18 @@ class WttjLinksSpider(scrapy.Spider):
 
     name = "wttj_links"
     start_urls = [
-        "https://www.welcometothejungle.com/fr/jobs?page={page_number}&aroundQuery=&query=data%20engineer&refinementList%5Bcontract_type_names.fr%5D%5B%5D=CDI&refinementList%5Bcontract_type_names.fr%5D%5B%5D=CDD%20%2F%20Temporaire&refinementList%5Bcontract_type_names.fr%5D%5B%5D=Autres&refinementList%5Bcontract_type_names.fr%5D%5B%5D=VIE&refinementList%5Bcontract_type_names.fr%5D%5B%5D=Freelance"
+        "https://www.welcometothejungle.com/fr/jobs?query=data%20engineer&page=1"
     ]
 
     BASE_URL = "https://www.welcometothejungle.com"
 
     links = set()
-    job_links_xpath = '//ol[@data-testid="jobs_index-search-results"]//a'
+    job_links_xpath = '//ol[@id="job-search-results"]/div/li/div/a'
 
 
     def start_requests(self):
         yield scrapy.Request(
-            self.start_urls[0].format(page_number=1),
+            self.start_urls[0],
             self.parse_jobs_list,
             meta={"playwright": True, "playwright_include_page": True},
         )
