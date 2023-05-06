@@ -2,6 +2,8 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from datetime import datetime
 
+from playwright.async_api import expect, Page
+
 
 class WttjLinksSpider(scrapy.Spider):
     """
@@ -16,8 +18,11 @@ class WttjLinksSpider(scrapy.Spider):
     BASE_URL = "https://www.welcometothejungle.com"
 
     links = set()
-    job_links_xpath = '//ol[@id="job-search-results"]/div/li/div/a'
 
+    # Bad practice but website has dynamic attribute and aria roles
+    # XPath to update when spider breaks (changes regularly)
+    next_page_xpath = '//*[@aria-label="Pagination"]//li[last()]'
+    job_links_xpath = '//ol[@id="job-search-results"]/div/li/div/div/div[2]/a'
 
     def start_requests(self):
         yield scrapy.Request(
@@ -30,23 +35,26 @@ class WttjLinksSpider(scrapy.Spider):
         """Parse javascript rendered results page and obtain individual job page links."""
         page = response.meta["playwright_page"]
 
-        job_elements = await page.query_selector_all(self.job_links_xpath)
-        for job_element in job_elements:
-            job_link = await job_element.get_attribute("href")
-            job_url = self.BASE_URL + job_link
-            self.links.add(job_url)
-
         while True:
             try:
-                next_locator = page.locator('//*[@aria-label="Pagination"]//li[last()]')
-                async with page.expect_navigation():
-                    await next_locator.click()
-
                 job_elements = await page.query_selector_all(self.job_links_xpath)
+
                 for job_element in job_elements:
                     job_link = await job_element.get_attribute("href")
                     job_url = self.BASE_URL + job_link
                     self.links.add(job_url)
+
+                    # For debugging
+                    # print('job_element', job_element)
+                    # print('job_link', job_link)
+                    # print('job_url', job_url)
+                    # print('links', self.links)
+                    print('\nLinks count:', len(self.links), '\n')
+
+                next_locator = page.locator(self.next_page_xpath)
+                async with page.expect_navigation():
+                    await next_locator.click()
+
             except TimeoutError:
                 print("Cannot find a next button on ", page.url)
                 break
@@ -72,6 +80,11 @@ if __name__ == "__main__":
             "AUTOTHROTTLE_TARGET_CONCURRENCY": 1,
             "AUTOTHROTTLE_START_DELAY": 5,
             "AUTOTHROTTLE_MAX_DELAY": 60,
+            "PLAYWRIGHT_LAUNCH_OPTIONS": {
+                # "headless": False,  # For debugging
+                "timeout": 20 * 1000,  # 20 seconds
+                "slow_mo": 10 * 1000  # slow down by 10 seconds to allow dynamic elements to load
+            }
         }
     )
     process.crawl(WttjLinksSpider)
