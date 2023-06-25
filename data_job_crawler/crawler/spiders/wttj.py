@@ -36,13 +36,13 @@ class WttjSpider(scrapy.Spider):
         l.add_value(
             "title",
             response.xpath(
-                '//*[text()="Le poste"]/parent::h4/following-sibling::h4/text()'
+                '//a[@data-testid="job-header-organization-link-logo"]/parent::div/h1/text()[2]'
             ).get(),
         )
         l.add_value(
             "company",
             response.xpath(
-                '//*[@data-testid="job-summary-organization-title"]/text()'
+                '//a[@data-testid="job-header-organization-link-logo"]/parent::div/a/span/text()'
             ).get(),
         )
         l.add_value(
@@ -54,7 +54,7 @@ class WttjSpider(scrapy.Spider):
         l.add_value(
             "type",
             response.xpath(
-                '//*[@name="contract"]/parent::span/following-sibling::span/span/text()'
+                '//i[@name="contract"]/following-sibling::span/text()'
             ).get(),
         )
         l.add_value(
@@ -64,8 +64,8 @@ class WttjSpider(scrapy.Spider):
             ).get(),
         )
         l.add_value('size', response.xpath('//*[@name="department"]/parent::span/following-sibling::span/text()').get())
-        l.add_value('experience', response.xpath('//span[contains(text(), "Expérience")]/following-sibling::span/text()').get())
-        l.add_value('education', response.xpath('//span[contains(text(), "Éducation")]/following-sibling::span/text()').get())
+        l.add_value('experience', response.xpath('//i[@name="suitcase"]/following-sibling::span/text()').get())
+        l.add_value('education', response.xpath('//i[@name="education_level"]/following-sibling::span/text()').get())
         l.add_value(
             "text",
             response.xpath("//h2/following-sibling::div//text()").getall(),
@@ -74,7 +74,7 @@ class WttjSpider(scrapy.Spider):
         l.add_value(
             "remote",
             response.xpath(
-                '//*[@name="remote"]/parent::span/following-sibling::span//text()'
+                '//i[@name="remote"]/following-sibling::span/text()'
             ).get(),
         )
         l.add_value("created_at", datetime.now())

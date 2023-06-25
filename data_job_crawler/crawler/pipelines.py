@@ -34,12 +34,10 @@ class OldJobsCrawlerPipeline:
         try:
             # https://www.psycopg.org/docs/usage.html#passing-parameters-to-sql-queries
             self.cur.execute("""
-                DELETE FROM apply
-                WHERE apply.job_id 
-                IN (SELECT id 
-                    FROM processed_jobs 
-                    WHERE url ~  %(oldurl)s);
-                """, {'oldurl': item['old_url'][0]})
+                UPDATE apply
+                SET open = False
+                WHERE job_id = %(id)s;
+                """, {'id': item['id'][0]})
             self.connection.commit()
         except:
             self.connection.rollback()
@@ -75,7 +73,9 @@ class JobsCrawlerPipeline:
                 "INSERT INTO raw_jobs(url, title, company, location, type, industry, text, remote, created_at, education, experience, size) "
                 "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
                 "ON CONFLICT (url) DO UPDATE "
-                "SET education=EXCLUDED.education, experience=EXCLUDED.experience, size=EXCLUDED.size;",
+                "SET title=EXCLUDED.title, company=EXCLUDED.company, location=EXCLUDED.location, "
+                "type=EXCLUDED.type, text=EXCLUDED.text, remote=EXCLUDED.remote, "
+                "education=EXCLUDED.education, experience=EXCLUDED.experience, size=EXCLUDED.size;",
                 (item['url'][0], item['title'][0], item['company'][0], item['location'][0], item['type'][0],
                  item['industry'][0], item['text'][0], item['remote'][0], item['created_at'][0], item['education'][0],
                  item['experience'][0], item['size'][0]))

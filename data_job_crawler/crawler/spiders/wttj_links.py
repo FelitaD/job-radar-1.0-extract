@@ -2,7 +2,7 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from datetime import datetime
 
-from playwright.async_api import expect, Page
+PROJECT_PATH = '/Users/donor/Library/Mobile Documents/com~apple~CloudDocs/PycharmProjects'
 
 
 class WttjLinksSpider(scrapy.Spider):
@@ -60,7 +60,7 @@ class WttjLinksSpider(scrapy.Spider):
                 break
             finally:
                 now = datetime.now().strftime('%d-%m-%y')
-                with open(f'/Users/donor/PycharmProjects/data-job-crawler/data_job_crawler/crawler/data'
+                with open(f'{PROJECT_PATH}/data-job-crawler/data_job_crawler/crawler/data'
                           f'/wttj_links_{now}.txt', "w+") as f:
                     f.write(str(self.links))
 

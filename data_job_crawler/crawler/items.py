@@ -7,6 +7,7 @@ import scrapy
 
 
 class JobsCrawlerItem(scrapy.Item):
+    job_id = scrapy.Field()
     url = scrapy.Field()
     title = scrapy.Field()
     company = scrapy.Field()
@@ -21,5 +22,5 @@ class JobsCrawlerItem(scrapy.Item):
     size = scrapy.Field()
 
 
-class OldJobsCrawlerItem(scrapy.Item):
-    old_url = scrapy.Field()
+# class OldJobsCrawlerItem(scrapy.Item):
+#     job_id = scrapy.Field()
