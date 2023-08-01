@@ -22,7 +22,7 @@ class WttjLinksSpider(scrapy.Spider):
     # Bad practice but website has dynamic attribute and aria roles
     # XPath to update when spider breaks (changes regularly)
     next_page_xpath = '//*[@aria-label="Pagination"]//li[last()]'
-    job_links_xpath = '//ol[@id="job-search-results"]/div/li/div/div/div[2]/a'
+    job_links_xpath = '//ol[@data-testid="search-results"]/div/li/div/div/div[2]/a'
 
     def start_requests(self):
         yield scrapy.Request(
@@ -44,12 +44,12 @@ class WttjLinksSpider(scrapy.Spider):
                     job_url = self.BASE_URL + job_link
                     self.links.add(job_url)
 
-                    # For debugging
+                    ## For debugging
                     # print('job_element', job_element)
                     # print('job_link', job_link)
                     # print('job_url', job_url)
                     # print('links', self.links)
-                    print('\nLinks count:', len(self.links), '\n')
+                    print('\nScraped links count:', len(self.links), '\n')
 
                 next_locator = page.locator(self.next_page_xpath)
                 async with page.expect_navigation():
